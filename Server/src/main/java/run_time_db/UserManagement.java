@@ -1,11 +1,19 @@
 package run_time_db;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import packet.Command;
 import packet.Packet;
 import packet.User;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,17 +22,38 @@ public enum UserManagement {
     INSTANCE;
 
     public List<User> users;
+    private final String filePath;
+    private final Gson gson;
 
     UserManagement() {
-        this.users = List.of(
-                User.builder().nickname("Mock 1").password("1234").build(),
-                User.builder().nickname("Mock 2").password("1234").build(),
-                User.builder().nickname("Mock 3").password("1234").build()
-        );
+        this.filePath = "users.json";
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.users = loadUsersFromFile();
+        if (this.users == null) users = new ArrayList<>();
     }
 
-    public void register() {
-        /* TODO: Implement */
+    public void register(User user) {
+        users.add(user);
+        saveUsersToFile();
+    }
+
+    private List<User> loadUsersFromFile() {
+        users = new ArrayList<>();
+        try (FileReader reader = new FileReader(filePath)) {
+            Type userListType = new TypeToken<List<User>>() {}.getType();
+            return gson.fromJson(reader, userListType);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>(); // Return an empty list if file doesn't exist or an error occurs
+        }
+    }
+
+    private void saveUsersToFile() {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            gson.toJson(users, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Optional<User> login(User userToLogin) {

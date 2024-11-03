@@ -131,7 +131,6 @@ public class Client {
         }
     }
 
-    /* TODO: Implement on the server side */
     private void register(Scanner scanner) {
         System.out.print("Enter new username: ");
         String username = scanner.nextLine();

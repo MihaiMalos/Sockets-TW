@@ -64,7 +64,18 @@ public class ClientThread extends Thread {
                 }
             }
             case REGISTER -> {
-                // Handle registration (not implemented)
+                User user = receivedPacket.getUser();
+                UserManagement.INSTANCE.register(user);
+                // Login user after register
+                user.setSocket(this.socket);  // Store the socket in the user
+                user.setOutStream(this.out);   // Store the ObjectOutputStream in the user
+
+                responsePacket = Packet.builder()
+                        .message("Success")
+                        .user(user)  // Send back the logged-in user
+                        .command(Command.LOGIN)
+                        .build();
+
             }
             case MESSAGE_ALL -> {
                 UserManagement.INSTANCE.broadcastMessage(receivedPacket);

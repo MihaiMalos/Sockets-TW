@@ -1,5 +1,6 @@
 package packet;
 
+import com.google.gson.Gson;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,4 +15,5 @@ public class User implements Serializable {
     private String password;
     private transient Socket socket; // Marked transient because socket is not serializable
     private transient ObjectOutputStream outStream; // Marked transient because streams are not serializable
+
 }

@@ -1,0 +1,5 @@
+Implementati urmatoarele doua functionalitati:
+
+- Conceptul de rooms: Exista room-uri cu diferite nume (pot fi deja hardocdate sau adugate de utilizator), iar in aceste roomuri mesajele sunt vizibile doar user-ilor care sunt in aceste roomuri.
+
+- Mesaj individual: Un user selecteaza un alt user specific (pe baza de nume/id) si comunica in privat cu acesta. Pentru a vedea utilizatori puteti implementa.
