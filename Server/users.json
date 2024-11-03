@@ -1,10 +1,14 @@
 [
   {
-    "nickname": "Mihai",
+    "nickname": "Mihai1",
     "password": "asddsa"
   },
   {
-    "nickname": "Test",
+    "nickname": "Mihai2",
+    "password": "asddsa"
+  },
+  {
+    "nickname": "Mihai3",
     "password": "asddsa"
   }
 ]

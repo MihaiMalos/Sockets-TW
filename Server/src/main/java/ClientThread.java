@@ -6,7 +6,8 @@ import packet.Command;
         import java.io.IOException;
         import java.io.ObjectInputStream;
         import java.io.ObjectOutputStream;
-        import java.net.Socket;
+import java.io.OutputStream;
+import java.net.Socket;
         import java.util.List;
         import java.util.Optional;
 
@@ -78,10 +79,20 @@ public class ClientThread extends Thread {
 
             }
             case MESSAGE_ALL -> {
-                UserManagement.INSTANCE.broadcastMessage(receivedPacket);
+                List<Packet> packets = UserManagement.INSTANCE.broadcastMessage(receivedPacket);
+                packets.forEach(this::sendPacket);
             }
             case MESSAGE_INDIVIDUAL -> {
-                // Handle individual messaging (not implemented)
+                UserManagement.INSTANCE.individualMessage(receivedPacket);
+            }
+            case JOIN_ROOM -> {
+                responsePacket = UserManagement.INSTANCE.joinRoom(receivedPacket);
+            }
+            case MESSAGE_ROOM -> {
+                UserManagement.INSTANCE.messageRoom(receivedPacket);
+            }
+            case EXIT_ROOM -> {
+                responsePacket = UserManagement.INSTANCE.exitRoom(receivedPacket);
             }
             default -> {
                 responsePacket = Packet.builder().message("Invalid command").build();
