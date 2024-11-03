@@ -6,14 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="23b0ff63-d4de-4530-8f7d-0a48f743daf7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/packet/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/packet/Command.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/packet/Packet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/packet/Packet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/packet/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/packet/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Server/src/main/java/ClientThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/main/java/ClientThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Server/src/main/java/packet/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/main/java/packet/Command.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Server/src/main/java/packet/Packet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/main/java/packet/Packet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Server/src/main/java/packet/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/main/java/packet/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Server/src/main/java/run_time_db/UserManagement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/src/main/java/run_time_db/UserManagement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Server/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/users.json" afterDir="false" />
@@ -86,7 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1727790076564</updated>
       <workItem from="1727790077606" duration="3284000" />
-      <workItem from="1730617081541" duration="16632000" />
+      <workItem from="1730617081541" duration="25177000" />
     </task>
     <servers />
   </component>

@@ -3,6 +3,7 @@ package run_time_db;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import jdk.jfr.Frequency;
 import packet.Command;
 import packet.Packet;
 import packet.User;
@@ -26,7 +27,10 @@ public enum UserManagement {
 
     UserManagement() {
         this.filePath = "users.json";
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
         this.users = loadUsersFromFile();
         if (this.users == null) users = new ArrayList<>();
         this.rooms = List.of(
@@ -66,8 +70,7 @@ public enum UserManagement {
                 .findFirst();
     }
 
-    public List<Packet> broadcastMessage(Packet packet) {
-        List<Packet> packets = new ArrayList<Packet>();
+    public void broadcastMessage(Packet packet) {
         for (User user : users) {
             /* Do not send the message back to the user who sent it */
             boolean isNotSameUser = !packet.getUser().getNickname().equals(user.getNickname());
@@ -82,10 +85,10 @@ public enum UserManagement {
                         .message(packet.getMessage())
                         .command(Command.MESSAGE_ALL)
                         .build();
-                packets.add(messagePacket);
+
+                sendPacket(messagePacket, user.getOutStream());
             }
         }
-        return packets;
     }
 
     public void individualMessage(Packet receivedPacket) {
@@ -95,10 +98,7 @@ public enum UserManagement {
                 .filter(user -> receivedPacket.getRecipientUsersName().contains(user.getNickname()))
                 .collect(Collectors.toList());
 
-        Optional<User> requesterUser = this.users
-                .stream()
-                .filter(user -> user.equals(receivedPacket.getUser()))
-                .findFirst();
+        User requesterUser = getUserFromList(receivedPacket.getUser());
 
         if (users.size() == 1) {
             for (User user : users) {
@@ -114,48 +114,68 @@ public enum UserManagement {
                 success = true;
             }
         }
-        if (!success && requesterUser.isPresent()) {
-            ObjectOutputStream outputStream = requesterUser.get().getOutStream();
+        if (!success && requesterUser != null) {
+            ObjectOutputStream outputStream = requesterUser.getOutStream();
             Packet packet = Packet.builder().message("User not found").build();
             sendPacket(packet, outputStream);
         }
     }
 
-    public Packet joinRoom(Packet receivedPacket) {
-        User user = receivedPacket.getUser();
+    public void joinRoom(Packet receivedPacket) {
+        User userInList = getUserFromList(receivedPacket.getUser());
         String room = receivedPacket.getMessage();
         boolean roomExists = rooms.contains(room);
-        if (roomExists) {
-            user.setCurrentRoom(room);
+        if (roomExists && userInList != null) {
+            userInList.setCurrentRoom(room);
 
-            return Packet.builder()
-                    .user(user)
-                    .message(room)
+            Packet packet = Packet.builder()
+                    .user(userInList.clone())
                     .command(Command.JOIN_ROOM)
                     .build();
+
+            sendPacket(packet, userInList.getOutStream());
         } else {
-            return Packet.builder().message("Room not found").build();
+            Packet packet = Packet.builder().message("Room not found").build();
+            sendPacket(packet, userInList.getOutStream());
         }
     }
 
     public void messageRoom(Packet receivedPacket) {
+        String room = receivedPacket.getUser().getCurrentRoom();
+
+        List<User> users = this.users
+                .stream()
+                .filter(user -> user.getCurrentRoom() != null && user.getCurrentRoom().contains(room))
+                .collect(Collectors.toList());
+
+        for (User user : users) {
+            Packet packet = Packet.builder()
+                    .user(receivedPacket.getUser())
+                    .message(receivedPacket.getMessage())
+                    .command(Command.MESSAGE_ROOM)
+                    .build();
+
+            sendPacket(packet, user.getOutStream());
+        }
     }
 
-    public Packet exitRoom(Packet receivedPacket) {
+    private User getUserFromList(User user) {
         Optional<User> requesterUser = this.users
                 .stream()
-                .filter(user -> user.equals(receivedPacket.getUser()))
+                .filter(currentUser -> currentUser.equals(user))
                 .findFirst();
+        return requesterUser.orElse(null);
+    }
 
-        if (requesterUser.isPresent()) {
-            requesterUser.get().setCurrentRoom(null);
-            return Packet.builder()
-                    .user(requesterUser.get())
-                    .command(Command.EXIT_ROOM)
-                    .build();
-        } else {
-            return Packet.builder().message("Room not found").build();
-        }
+    public void exitRoom(Packet receivedPacket) {
+        User userInList = getUserFromList(receivedPacket.getUser());
+        userInList.setCurrentRoom(null);
+        Packet packet = Packet.builder()
+                .user(userInList.clone())
+                .command(Command.EXIT_ROOM)
+                .build();
+
+        sendPacket(packet, userInList.getOutStream());
     }
 
     private void sendPacket(Packet packet, ObjectOutputStream output) {

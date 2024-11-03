@@ -79,20 +79,19 @@ public class ClientThread extends Thread {
 
             }
             case MESSAGE_ALL -> {
-                List<Packet> packets = UserManagement.INSTANCE.broadcastMessage(receivedPacket);
-                packets.forEach(this::sendPacket);
+                UserManagement.INSTANCE.broadcastMessage(receivedPacket);
             }
             case MESSAGE_INDIVIDUAL -> {
                 UserManagement.INSTANCE.individualMessage(receivedPacket);
             }
             case JOIN_ROOM -> {
-                responsePacket = UserManagement.INSTANCE.joinRoom(receivedPacket);
+                UserManagement.INSTANCE.joinRoom(receivedPacket);
             }
             case MESSAGE_ROOM -> {
                 UserManagement.INSTANCE.messageRoom(receivedPacket);
             }
             case EXIT_ROOM -> {
-                responsePacket = UserManagement.INSTANCE.exitRoom(receivedPacket);
+                UserManagement.INSTANCE.exitRoom(receivedPacket);
             }
             default -> {
                 responsePacket = Packet.builder().message("Invalid command").build();

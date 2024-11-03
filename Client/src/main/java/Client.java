@@ -47,7 +47,7 @@ public class Client {
                             }
 
                             if (packet.getCommand().equals(Command.MESSAGE_ALL)) {
-                                String message = "%s: %s ".formatted(packet.getUser().getNickname(), packet.getMessage());
+                                String message = "[Broadcast] %s: %s ".formatted(packet.getUser().getNickname(), packet.getMessage());
                                 System.out.println(message);
                             }
                             if (packet.getCommand().equals(Command.MESSAGE_INDIVIDUAL)) {
@@ -55,14 +55,19 @@ public class Client {
                                 System.out.println(message);
                             }
                             if (packet.getCommand().equals(Command.JOIN_ROOM)) {
-                                String message = "Joined the room: %s ".formatted(packet.getMessage());
-                                currentUser.setCurrentRoom(packet.getMessage());
+                                String message = "Joined the room: %s ".formatted(packet.getUser().getCurrentRoom());
+                                currentUser.setCurrentRoom(packet.getUser().getCurrentRoom());
+                                System.out.println(message);
+                            }
+
+                            if (packet.getCommand().equals(Command.MESSAGE_ROOM)) {
+                                String message = "[%s] %s: %s ".formatted(currentUser.getCurrentRoom(), packet.getUser().getNickname(), packet.getMessage());
                                 System.out.println(message);
                             }
 
                             if (packet.getCommand().equals(Command.EXIT_ROOM)) {
                                 String message = "Room left";
-                                currentUser.setCurrentRoom(null);
+                                currentUser.setCurrentRoom(packet.getUser().getCurrentRoom());
                                 System.out.println(message);
                             }
                         }
@@ -205,7 +210,7 @@ public class Client {
             out.writeObject(Packet
                     .builder()
                     .message(message)
-                    .user(currentUser)  // Use the retained User (principal)
+                    .user(currentUser.clone())  // Use the retained User (principal)
                     .command(Command.MESSAGE_ALL)
                     .build());
         } catch (IOException e) {
@@ -226,7 +231,7 @@ public class Client {
             out.writeObject(Packet
                     .builder()
                     .message(message)
-                    .user(currentUser)  // Use the retained User (principal)
+                    .user(currentUser.clone())  // Use the retained User (principal)
                     .recipientUsersName(usersToMessage)
                     .command(Command.MESSAGE_INDIVIDUAL)
                     .build());
@@ -243,7 +248,7 @@ public class Client {
             out.writeObject(Packet
                     .builder()
                     .message(name)
-                    .user(currentUser)  // Use the retained User (principal)
+                    .user(currentUser.clone())  // Use the retained User (principal)
                     .command(Command.JOIN_ROOM)
                     .build());
 
@@ -259,7 +264,7 @@ public class Client {
         try {
             out.writeObject(Packet
                     .builder()
-                    .user(currentUser)  // Use the retained User (principal)
+                    .user(currentUser.clone())  // Use the retained User (principal)
                     .command(Command.EXIT_ROOM)
                     .build());
 
@@ -279,7 +284,7 @@ public class Client {
             out.writeObject(Packet
                     .builder()
                     .message(message)
-                    .user(currentUser)  // Use the retained User (principal)
+                    .user(currentUser.clone())  // Use the retained User (principal)
                     .command(Command.MESSAGE_ROOM)
                     .build());
         } catch (IOException e) {
