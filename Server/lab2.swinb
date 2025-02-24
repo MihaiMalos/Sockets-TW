@@ -1,0 +1,121 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md2">
+### 1.	Calculați numărul de apariții al unui element într-o listă.
+</div>
+
+<div class="nb-cell program" name="p1">
+/*
+ * 
+ * occurrences(l1…ln,val)={0  ,l=[ ]
+			    { 1+ occurrences(l2…ln,val)  ,l1=val
+                { occurrences(l2…ln,val) ,    l1 !=val
+ * 
+ * nume predicate, constante = litera mica
+ * variabile = litera mare
+ * H|T desparte lista in H = primul element, T = restul listei
+ * :- daca
+ * */
+ 
+ occurrences([], Val, 0). % fact "occurances de Val in [] este 0."
+ occurrences([H|T], Val, R):-
+    H =:= Val,
+    occurrences(T, Val, RRec),
+    R is RRec + 1.
+ occurrences([H|T], Val, R):-
+    H =\= Val,
+    occurrences(T, Val, R).
+</div>
+
+<div class="nb-cell markdown" name="md1">
+### 2.	Fiind dată o listă, transformați lista astfel: 
+#### a.	Înmulțiți cu 5 numerele pare
+#### b.	Scădeți 5 din numerele impare
+</div>
+
+<div class="nb-cell program" name="p2">
+/*
+ * 
+ * Transf(l1…ln)={[ ] ,l=[ ]
+		{(l1*5) U transf(l2...ln) , l1%2==0
+		{(l1-5) U transf(l2...ln) , l1%2==1
+ * 
+ * */
+
+transf([], []).
+
+transf([H|T], R) :-
+    H mod 2 =:= 0,
+    transf(T, RRec),
+    L1New is H*5,
+    R = [L1New|RRec].
+
+transf([H|T], R) :-
+    H mod 2 =:= 1,
+    transf(T, RRec),
+    L1New is H-5,
+    R = [L1New|RRec].
+</div>
+
+<div class="nb-cell markdown" name="md3">
+### 3.	Fiind dată o listă, adăugați după fiecare element de pe poziții pare suma cifrelor impare ale elementului respectiv. Primul element al listei se află pe poziția 1
+
+#### Ex. AddAfterEvenPos([1,2,13,65,297,543,63]) = [1,2,0, 13, 65, 5, 297, 543, 8, 63]
+</div>
+
+<div class="nb-cell program" name="p3">
+/*
+ * 
+ * 	𝑠𝑢𝑚𝐷𝑖𝑔𝑖𝑡𝑠(𝑛𝑢𝑚𝑏𝑒𝑟)  =    { 0, 						𝑛𝑢𝑚𝑏𝑒𝑟 = 0,
+	{𝑛𝑢𝑚𝑏𝑒𝑟 % 10 + 𝑠𝑢𝑚𝐷𝑖𝑔𝑖𝑡𝑠(𝑛𝑢𝑚𝑏𝑒𝑟 𝑑𝑖𝑣 10),         𝑛𝑢𝑚𝑏𝑒𝑟%10 este impar
+	{𝑠𝑢𝑚𝐷𝑖𝑔𝑖𝑡𝑠(𝑛𝑢𝑚𝑏𝑒𝑟 𝑑𝑖𝑣 10), 			  altfel
+		
+AddAfterEvenPos(l1…ln, poz) ={[ ] ,l=[ ]
+		={l1U sumDigits(l1)  U AddAfterEvenPos(l2…ln,poz+1),poz %2 ==0
+                        ={l1 U AddAfterEvenPos(l2…ln,poz+1) ,poz %2 ==1
+
+ * 
+ * */
+
+sum_digits(0, 0).
+
+sum_digits(Number, Sum) :-
+    Number &gt; 0,
+    LastDigit is Number mod 10,  % Obține ultima cifră
+    LastDigit mod 2 =:= 1,
+    RemainingNumber is Number div 10, % Elimină ultima cifră
+    sum_digits(RemainingNumber, RestSum), % Apel recursiv pentru restul numărului
+    Sum is RestSum + LastDigit. % Adună ultima cifră la suma cifrelor restului.
+
+sum_digits(Number, Sum) :-
+    Number &gt; 0,
+    LastDigit is Number mod 10,  % Obține ultima cifră
+    LastDigit mod 2 =:= 0,
+    RemainingNumber is Number // 10, % Elimină ultima cifră
+    sum_digits(RemainingNumber, Sum). % Apel recursiv pentru restul numărului
+
+add_after_even_pos([], _, []).
+add_after_even_pos([Head | Tail], Pos, Result) :-
+    0 is Pos mod 2,
+    sum_digits(Head, DigitSum),
+    add_after_even_pos(Tail, Pos + 1, RestOfResult),
+    Result = [Head, DigitSum | RestOfResult].
+add_after_even_pos([Head | Tail], Pos, Result) :-
+    1 is Pos mod 2,
+    add_after_even_pos(Tail, Pos + 1, RestOfResult),
+    Result = [Head | RestOfResult].
+
+/*
+ *	 AddAfterEvenPos(l1..ln) = {[ ]  ,l=[ ]
+			    = {l1	,l=[ l1]
+			    ={ l1 U l2 U sumDigits(l2) U AddAfterEvenPos(l3…ln) ,altfel
+ */
+
+add_after_even_pos2([], []).
+add_after_even_pos2([Head1], [Head1]).
+add_after_even_pos2([Head1, Head2 | Tail], [Head1, Head2, SumDigits | Tail2]) :-
+                 	sum_digits(Head2, SumDigits),
+    				add_after_even_pos2(Tail, Tail2).
+</div>
+
+</div>
